@@ -1,4 +1,4 @@
-package demo
+package demos
 
 // GetFibonacci is to create the Fibonacci list
 func GetFibonacci(n int) []int {
