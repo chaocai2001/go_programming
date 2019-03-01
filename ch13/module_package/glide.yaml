@@ -1,0 +1,6 @@
+package: go_programming/ch13/module_package
+import: []
+testImport:
+- package: github.com/easierway/concurrent_map
+  version: 0.9.1
+- package: github.com/easierway/fast_hashmap

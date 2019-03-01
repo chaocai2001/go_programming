@@ -18,7 +18,6 @@ func (e *Employee) String() string {
 	return fmt.Sprintf("ID:%s/Name:%s/Age:%d", e.Id, e.Name, e.Age)
 }
 
-//
 // func (e Employee) String() string {
 // 	fmt.Println("Memory Address is ", unsafe.Pointer(&e.Name))
 // 	return fmt.Sprintf("ID:%s-Name:%s-Age:%d", e.Id, e.Name, e.Age)

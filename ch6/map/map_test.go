@@ -1,6 +1,8 @@
 package map_test
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestMapInit(t *testing.T) {
 	m := map[string]int{"one": 1, "two": 2, "three": 3}
@@ -28,4 +30,28 @@ func TestMapTravel(t *testing.T) {
 	for k, v := range m {
 		t.Log(k, v)
 	}
+}
+
+func TestFuncValue(t *testing.T) {
+	m := map[int]func(op int) int{}
+	m[1] = func(op int) int { return op }
+	m[2] = func(op int) int { return op * op }
+	m[3] = func(op int) int { return op * op * op }
+	t.Log(m[1](2), m[2](2))
+}
+
+func TestUsingMapAsSet(t *testing.T) {
+	set := map[int]bool{}
+	//添加元素
+	set[1] = true
+	//删除元素
+	delete(set, 1)
+	t.Log(len(set))
+	for i := 0; i < 3; i++ {
+		//判断元素是否存在
+		if set[i] {
+			t.Logf("%d is existing.", i)
+		}
+	}
+
 }

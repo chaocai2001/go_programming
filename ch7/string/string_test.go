@@ -3,6 +3,7 @@ package string_test
 import (
 	"testing"
 	"unicode/utf8"
+	"unsafe"
 )
 
 func TestString(t *testing.T) {
@@ -10,14 +11,15 @@ func TestString(t *testing.T) {
 	t.Log(s) //初始化为默认零值“”
 	s = "hello"
 	t.Log(len(s))
-	//	s[1] = '3'
-	s = "\xE4\xB8\xA5"
+	//	s[1] = '3' //string是不可变的byte slice
+	s = "\xE4\xB8\xA5" //可以存储任何二进制数据
 	s = "\xE4\xBA\xB5\xFF"
 	t.Log(s)
 	s = "中"
-	t.Log(len(s))
+	t.Log(len(s)) //是byte数
 	t.Logf("%x", s)
 	c := []rune(s)
+	t.Log("rune size:", unsafe.Sizeof(c[0]))
 	t.Logf("%x", c[0])
 }
 
