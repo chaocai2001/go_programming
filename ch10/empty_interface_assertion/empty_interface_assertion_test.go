@@ -24,9 +24,10 @@ func doSomething(any interface{}) {
 	switch v := any.(type) {
 	case int:
 		fmt.Println("Integer:", v)
-	case Coder:
-		fmt.Println("Programmer", v.WriteCode())
-
+	case string:
+		fmt.Println("string:", v)
+	default:
+		fmt.Println("Unknown type")
 	}
 	fmt.Println(any)
 }
