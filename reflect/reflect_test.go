@@ -6,10 +6,20 @@ import (
 	"testing"
 )
 
+func TestTypeAndValue(t *testing.T) {
+	var f int64 = 10
+	t.Log(reflect.TypeOf(f), reflect.ValueOf(f))
+	t.Log(reflect.ValueOf(f).Type())
+}
+
 type Employee struct {
 	EmployeeID string
 	Name       string
 	Age        int
+}
+
+func (e *Employee) UpdateAge(newVal int) {
+	e.Age = newVal
 }
 
 type Customer struct {
@@ -23,6 +33,13 @@ func TestDeepEqual(t *testing.T) {
 	b := map[int]string{1: "one", 2: "two", 4: "three"}
 	//fmt.Println(a == b)
 	fmt.Println(reflect.DeepEqual(a, b))
+
+	s1 := []int{1, 2, 3}
+	s2 := []int{1, 2, 3}
+	s3 := []int{2, 3, 1}
+	t.Log("s1 == s2?", reflect.DeepEqual(s1, s2))
+	t.Log("s1 == s3?", reflect.DeepEqual(s1, s3))
+
 	c1 := Customer{"1", "Mike", 40}
 	c2 := Customer{"1", "Mike", 40}
 	fmt.Println(c1 == c2)
@@ -30,7 +47,7 @@ func TestDeepEqual(t *testing.T) {
 }
 
 func CheckType(v interface{}) {
-	t := reflect.ValueOf(v)
+	t := reflect.TypeOf(v)
 	switch t.Kind() {
 	case reflect.Float32, reflect.Float64:
 		fmt.Println("Float")
@@ -47,21 +64,33 @@ func TestBasicType(t *testing.T) {
 
 }
 
+func TestInvokeMethodByName(t *testing.T) {
+	e := &Employee{"1", "Mike", 30}
+	t.Log("Name:", reflect.ValueOf(*e).FieldByName("Name"))
+	reflect.ValueOf(e).MethodByName("UpdateAge").
+		Call([]reflect.Value{reflect.ValueOf(1)})
+	t.Log("Updated Age:", e)
+}
+
 func fillNameAndAge(st interface{}, settings map[string]interface{}) {
 
 	// func (v Value) Elem() Value
 	// Elem returns the value that the interface v contains or that the pointer v points to.
 	// It panics if v's Kind is not Interface or Ptr.
 	// It returns the zero Value if v is nil.
+	var (
+		field reflect.StructField
+		ok    bool
+	)
 
 	for k, v := range settings {
-		if field, ok := (reflect.ValueOf(st)).Elem().Type().FieldByName(k); ok {
-			if field.Type == reflect.TypeOf(v) {
-				fmt.Println(field.Type, reflect.TypeOf(v))
-				vstr := reflect.ValueOf(st)
-				vstr = vstr.Elem()
-				vstr.FieldByName(k).Set(reflect.ValueOf(v))
-			}
+		if field, ok = (reflect.ValueOf(st)).Elem().Type().FieldByName(k); !ok {
+			continue
+		}
+		if field.Type == reflect.TypeOf(v) {
+			vstr := reflect.ValueOf(st)
+			vstr = vstr.Elem()
+			vstr.FieldByName(k).Set(reflect.ValueOf(v))
 		}
 
 	}
