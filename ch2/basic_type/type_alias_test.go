@@ -8,6 +8,10 @@ import (
 type MyByte uint8
 
 func TestTypeImplicitConv(t *testing.T) {
+	var (
+		i   int
+		err error
+	)
 	//var i int32 = 16
 	//var j int64 = i
 	//t.Log(i, j)
@@ -48,5 +52,5 @@ func TestCompareArrays(t *testing.T) {
 	d := [...]int{1, 2, 3, 4}
 	t.Log(a == b)
 	t.Log(a == c)
-	t.Log(a != d)
+	//t.Log(a != d)
 }

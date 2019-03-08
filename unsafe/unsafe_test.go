@@ -9,6 +9,18 @@ import (
 	"unsafe"
 )
 
+type Customer struct {
+	Name string
+	Age  int
+}
+
+func TestUnsafe(t *testing.T) {
+	i := 10
+	f := *(*float64)(unsafe.Pointer(&i))
+	t.Log(f)
+}
+
+// The cases is suitable for unsafe
 type MyInt int
 
 func TestConvert(t *testing.T) {

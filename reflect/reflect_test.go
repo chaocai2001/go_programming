@@ -1,6 +1,7 @@
 package reflect_test
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 	"testing"
@@ -14,7 +15,7 @@ func TestTypeAndValue(t *testing.T) {
 
 type Employee struct {
 	EmployeeID string
-	Name       string
+	Name       string `format:"normal"`
 	Age        int
 }
 
@@ -67,17 +68,34 @@ func TestBasicType(t *testing.T) {
 func TestInvokeMethodByName(t *testing.T) {
 	e := &Employee{"1", "Mike", 30}
 	t.Log("Name:", reflect.ValueOf(*e).FieldByName("Name"))
+	if nameField, ok := reflect.TypeOf(*e).FieldByName("Name"); !ok {
+		t.Error("Failed to get 'Name' field.")
+	} else {
+		t.Log("Tag:format", nameField.Tag.Get("format"))
+	}
 	reflect.ValueOf(e).MethodByName("UpdateAge").
 		Call([]reflect.Value{reflect.ValueOf(1)})
 	t.Log("Updated Age:", e)
 }
 
-func fillNameAndAge(st interface{}, settings map[string]interface{}) {
+func fillNameAndAge(st interface{}, settings map[string]interface{}) error {
 
 	// func (v Value) Elem() Value
 	// Elem returns the value that the interface v contains or that the pointer v points to.
 	// It panics if v's Kind is not Interface or Ptr.
 	// It returns the zero Value if v is nil.
+
+	if reflect.TypeOf(st).Kind() != reflect.Ptr {
+		// Elem() 获取指针指向的值
+		if reflect.TypeOf(st).Elem().Kind() != reflect.Struct {
+			return errors.New("the first param should be a pointer to the struct type.")
+		}
+	}
+
+	if settings == nil {
+		return errors.New("settings is nil.")
+	}
+
 	var (
 		field reflect.StructField
 		ok    bool
@@ -94,15 +112,20 @@ func fillNameAndAge(st interface{}, settings map[string]interface{}) {
 		}
 
 	}
+	return nil
 }
 
 func TestFillNameAndAge(t *testing.T) {
 	settings := map[string]interface{}{"Name": "Mike", "Age": 40}
 	e := Employee{}
-	fillNameAndAge(&e, settings)
+	if err := fillNameAndAge(&e, settings); err != nil {
+		t.Fatal(err)
+	}
 	t.Log(e)
 	c := new(Customer)
-	fillNameAndAge(c, settings)
+	if err := fillNameAndAge(c, settings); err != nil {
+		t.Fatal(err)
+	}
 	t.Log(*c)
 
 }

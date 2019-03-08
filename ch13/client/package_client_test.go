@@ -7,4 +7,5 @@ import (
 
 func TestPackageClient(t *testing.T) {
 	series.GetFibonacciSerie(5)
+	series.square(5)
 }
